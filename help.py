@@ -1,24 +1,18 @@
-import csv
+import pandas as pd
+from faker import Faker
+import random
 
-data = [
-    ["Male", "Computer Science", 4, 3, 5, 4, 8],
-    ["Female", "Psychology", 3, 4, 4, 3, 6],
-    ["Male", "Engineering", 5, 2, 3, 5, 7],
-    ["Female", "Art", 2, 5, 4, 2, 5],
-    ["Male", "Physics", 4, 3, 3, 4, 7],
-    ["Female", "Chemistry", 3, 4, 5, 3, 6],
-]
+# Initialize Faker for generating random text
+fake = Faker()
 
-header = ["gender", "major", "academic_experience", "extracurricular_activities", "social_life", "overall_well_being", "happiness"]
+# Generate synthetic data with 100 responses
+responses = [fake.paragraph(nb_sentences=3, variable_nb_sentences=True, ext_word_list=None) for _ in range(100)]
+happiness_labels = [random.choice([0, 1]) for _ in range(100)]
 
-# Write to CSV file
-with open('student_survey_data_generated.csv', 'w', newline='') as csvfile:
-    csvwriter = csv.writer(csvfile)
-    
-    # Write header
-    csvwriter.writerow(header)
-    
-    # Write data
-    csvwriter.writerows(data)
+# Create a DataFrame
+df = pd.DataFrame({'response': responses, 'happiness': happiness_labels})
 
-print("CSV file generated successfully.")
+# Save the DataFrame to a CSV file
+df.to_csv('large_student_responses.csv', index=False)
+
+print("CSV file with 100 responses generated successfully.")
