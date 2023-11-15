@@ -1,18 +1,23 @@
-import pandas as pd
-from faker import Faker
-import random
+import requests
 
-# Initialize Faker for generating random text
-fake = Faker()
+# URL for the Flask application with TextBlob sentiment prediction
+url_textblob = 'http://127.0.0.1:5000/predict_sentiment_textblob'  # Update with the correct URL if needed
 
-# Generate synthetic data with 100 responses
-responses = [fake.paragraph(nb_sentences=3, variable_nb_sentences=True, ext_word_list=None) for _ in range(100)]
-happiness_labels = [random.choice([0, 1]) for _ in range(100)]
+# Example sentence for prediction
+input_sentence =input()
 
-# Create a DataFrame
-df = pd.DataFrame({'response': responses, 'happiness': happiness_labels})
+# Send a POST request to the Flask application with TextBlob route
+response_textblob = requests.post(url_textblob, json={'sentence': input_sentence})
 
-# Save the DataFrame to a CSV file
-df.to_csv('large_student_responses.csv', index=False)
-
-print("CSV file with 100 responses generated successfully.")
+# Check the response
+if response_textblob.status_code == 200:
+    result_textblob = response_textblob.json()
+    # Extract polarity and subjectivity from the response
+    polarity = result_textblob.get('polarity', 0)
+    subjectivity = result_textblob.get('subjectivity', 0)
+    
+    # Determine sentiment based on polarity and subjectivity
+    predicted_sentiment = 1 if polarity > 0 else 0
+    print(f"{predicted_sentiment}")
+else:
+    print(f"Error: {response_textblob.status_code}, {response_textblob.json()}")
